@@ -7,7 +7,7 @@ fi
 export REGISTRY=${INPUT_REGISTRY:-"docker.io"}
 export IMAGE=${INPUT_IMAGE}
 export BRANCH=$(echo ${GITHUB_REF} | sed -E "s/refs\/(heads|tags)\///g" | sed -e "s/\//-/g")
-export TAG=${INPUT_TAG:-$([ "$BRANCH" == "master" ] && echo latest || echo $BRANCH)}
+export TAG=${INPUT_TAG:-$([ "$BRANCH" == "master" || "$BRANCH" == "main" ] && echo latest || echo $BRANCH)}
 export TAG=${TAG:-"latest"}
 export TAG=${TAG#$INPUT_STRIP_TAG_PREFIX}
 export USERNAME=${INPUT_USERNAME:-$GITHUB_ACTOR}
@@ -71,7 +71,7 @@ if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
 else
     export DESTINATION="--destination $IMAGE"
     if [ ! -z $IMAGE_LATEST ]; then
-        export DESTINATION="$DESTINATION --destination $IMAGE_LATEST"  
+        export DESTINATION="$DESTINATION --destination $IMAGE_LATEST"
     fi
 fi
 
@@ -114,8 +114,8 @@ if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
 
     if [ ! -z $IMAGE_LATEST ]; then
         echo "Tagging latest..."
-        /kaniko/crane tag $IMAGE latest  
+        /kaniko/crane tag $IMAGE latest
     fi
- 
+
     echo "Done 🎉️"
 fi
