@@ -7,7 +7,7 @@ fi
 export REGISTRY=${INPUT_REGISTRY:-"docker.io"}
 export IMAGE=${INPUT_IMAGE}
 export BRANCH=$(echo ${GITHUB_REF} | sed -E "s/refs\/(heads|tags)\///g" | sed -e "s/\//-/g")
-export GIT_COMMIT=$(git rev-parse --short HEAD)
+export GIT_COMMIT="lateset"
 export TAG=${INPUT_TAG:-$( echo $BRANCH-${GIT_COMMIT}) }
 export TAG=${TAG:-"latest"}
 export TAG=${TAG#$INPUT_STRIP_TAG_PREFIX}
