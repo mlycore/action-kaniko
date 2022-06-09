@@ -7,7 +7,7 @@ fi
 export REGISTRY=${INPUT_REGISTRY:-"docker.io"}
 export IMAGE=${INPUT_IMAGE}
 export BRANCH=$(echo ${GITHUB_REF} | sed -E "s/refs\/(heads|tags)\///g" | sed -e "s/\//-/g")
-#export GIT_COMMIT="lateset"
+export GIT_COMMIT=$(echo ${GITHUB_SHA} | cut -c1-7)
 export TAG=${INPUT_TAG:-$( echo $BRANCH-${GIT_COMMIT}) }
 #export TAG=${INPUT_TAG:-$( echo $BRANCH) }
 export TAG=${TAG:-"latest"}
@@ -35,7 +35,6 @@ ensure "${PASSWORD}" "password"
 ensure "${IMAGE}" "image"
 ensure "${TAG}" "tag"
 ensure "${CONTEXT_PATH}" "path"
-env
 
 if [ "$REGISTRY" == "ghcr.io" ]; then
     IMAGE_NAMESPACE="$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')"
@@ -92,7 +91,6 @@ cat <<EOF >/kaniko/.docker/config.json
 EOF
 
 # https://github.com/GoogleContainerTools/kaniko/issues/1349
-echo ARGS=${ARGS}
 /kaniko/executor --reproducible --force $ARGS
 
 if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
